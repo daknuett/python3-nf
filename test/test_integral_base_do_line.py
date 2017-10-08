@@ -1,4 +1,4 @@
-import nf.base.do.line as line
+import nf.integral.base.do.line as line
 import numpy as np
 import sympy, pytest
 

@@ -1,8 +1,8 @@
 from distutils.core import setup, Extension
 
 
-base_do_line = Extension("nf.base.do.line",
-		sources = ["c/base/line.c"])
+base_do_line = Extension("nf.integral.base.do.line",
+		sources = ["c/integral/base/line.c"])
 
 setup(name = "nf",
 	version = "0.0.1",
