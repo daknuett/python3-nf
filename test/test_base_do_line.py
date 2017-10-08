@@ -19,6 +19,5 @@ def test_integrate_line_rect():
 		def __next__(self):
 			return self.step
 
-	assert line.integrate_numbers_rect(iter(r), StepIterator(0.001), f, 0) == 
-		pytest.approx(sympy.integrate(term, (X, 0, 10)), rel=1e-2)
+	assert line.integrate_numbers_rect(iter(r), StepIterator(0.001), f, 0) == pytest.approx(sympy.integrate(term, (X, 0, 10)), rel=1e-2)
 		
