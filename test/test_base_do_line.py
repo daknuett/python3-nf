@@ -1,6 +1,7 @@
 import nf.base.do.line as line
 import numpy as np
-import sympy, math
+import sympy, pytest
+
 
 def test_integrate_line_rect():
 	f = lambda x: x**2
@@ -18,6 +19,6 @@ def test_integrate_line_rect():
 		def __next__(self):
 			return self.step
 
-	assert math.isclose(line.integrate_numbers_rect(iter(r), StepIterator(0.001), f, 0),
-		sympy.integrate(term, (X, 0, 10)), rel_tol=1e-2)
+	assert line.integrate_numbers_rect(iter(r), StepIterator(0.001), f, 0) == 
+		pytest.approx(sympy.integrate(term, (X, 0, 10)), rel=1e-2)
 		
