@@ -8,7 +8,6 @@ def test_integrate_line_rect():
 	X = sympy.symbols("X")
 	term = X**2
 
-	sympy.integrate(term)
 
 	r = np.arange(0, 10.0, 0.001)
 	class StepIterator(object):
@@ -20,5 +19,5 @@ def test_integrate_line_rect():
 			return self.step
 
 	assert math.isclose(line.integrate_numbers_rect(iter(r), StepIterator(0.001), f, 0),
-		sympy.integrate(term, (0, 10)))
+		sympy.integrate(term, (X, 0, 10)), rel_tol=1e-2)
 		
