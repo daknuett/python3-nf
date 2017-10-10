@@ -1,13 +1,6 @@
 from ..do.line import integrate_numbers_rect
-from numpy import arange
 
-class StepIterator(object):
-	def __init__(self, width):
-		self.width = width
-	def __iter__(self):
-		return self
-	def __next__(self):
-		return self.width
+from ...util.do.iterators import WidthIterator, StepIterator
 
 
 def integrate_steps(f, rnge, steps):
@@ -35,7 +28,7 @@ def integrate_steps(f, rnge, steps):
 
 
 	width = (stop - start) / steps
-	return integrate_numbers_rect(iter(arange(start, stop, width)), StepIterator(width), f, 0)
+	return integrate_numbers_rect(StepIterator(start, stop, width), WidthIterator(width), f, 0)
 
 def integrate_width(f, rnge, width):
 	"""
@@ -61,5 +54,5 @@ def integrate_width(f, rnge, width):
 		raise TypeError("rnge must be range or list or tuple")
 
 
-	return integrate_numbers_rect(iter(arange(start, stop, width)), StepIterator(width), f, 0)
+	return integrate_numbers_rect(StepIterator(start, stop, width), WidthIterator(width), f, 0)
 
