@@ -41,10 +41,11 @@ static int nf_util_iterators_do_StepIterator_c_next(nf_util_iterators_do_StepIte
 	return 0;
 }
 
-static PyObject * nf_util_iterators_do_StepIterator_next(nf_util_iterators_do_StepIterator * self)
+static PyObject * nf_util_iterators_do_StepIterator_next(PyObject * self)
 {
+
 	double res;
-	int stop = nf_util_iterators_do_StepIterator_c_next(self, &res);
+	int stop = nf_util_iterators_do_StepIterator_c_next((nf_util_iterators_do_StepIterator *) self, &res);
 	if(stop)
 	{
 		PyErr_SetString(PyExc_StopIteration, "");
@@ -58,9 +59,9 @@ static void nf_util_iterators_do_StepIterator_reset(nf_util_iterators_do_StepIte
 {
 	self->current = self->start;
 }
-static PyObject * nf_util_iterators_do_StepIterator_iter(nf_util_iterators_do_StepIterator * self)
+static PyObject * nf_util_iterators_do_StepIterator_iter(PyObject * self)
 {
-	nf_util_iterators_do_StepIterator_reset(self);
+	nf_util_iterators_do_StepIterator_reset((nf_util_iterators_do_StepIterator *) self);
 	return (PyObject *) self;
 }
 
@@ -138,14 +139,14 @@ static int nf_util_iterators_do_WidthIterator_c_next(nf_util_iterators_do_WidthI
 	return 0;
 }
 
-static PyObject * nf_util_iterators_do_WidthIterator_next(nf_util_iterators_do_WidthIterator * self)
+static PyObject * nf_util_iterators_do_WidthIterator_next(PyObject * self)
 {
 	double res;
-	nf_util_iterators_do_WidthIterator_c_next(self, &res);
+	nf_util_iterators_do_WidthIterator_c_next((nf_util_iterators_do_WidthIterator *) self, &res);
 	return PyFloat_FromDouble(res);
 }
 
-static PyObject * nf_util_iterators_do_WidthIterator_iter(nf_util_iterators_do_WidthIterator * self)
+static PyObject * nf_util_iterators_do_WidthIterator_iter(PyObject * self)
 {
 	return self;
 }
