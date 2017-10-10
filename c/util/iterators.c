@@ -62,8 +62,12 @@ static void nf_util_iterators_do_StepIterator_reset(nf_util_iterators_do_StepIte
 static PyObject * nf_util_iterators_do_StepIterator_iter(PyObject * self)
 {
 	nf_util_iterators_do_StepIterator_reset((nf_util_iterators_do_StepIterator *) self);
+	Py_INCREF((PyObject *) self);
 	return (PyObject *) self;
 }
+
+
+
 
 static PyTypeObject nf_util_iterators_do_StepIteratorType = 
 {
@@ -148,6 +152,7 @@ static PyObject * nf_util_iterators_do_WidthIterator_next(PyObject * self)
 
 static PyObject * nf_util_iterators_do_WidthIterator_iter(PyObject * self)
 {
+	Py_INCREF((PyObject *) self);
 	return self;
 }
 
