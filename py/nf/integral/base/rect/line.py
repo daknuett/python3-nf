@@ -1,6 +1,6 @@
 from ..do.line import integrate_numbers_rect
 
-from ...util.do.iterators import WidthIterator, StepIterator
+from ....util.do.iterators import WidthIterator, StepIterator
 
 
 def integrate_steps(f, rnge, steps):
