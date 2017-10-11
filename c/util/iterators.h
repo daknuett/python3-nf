@@ -29,6 +29,12 @@ static PyTypeObject * nf_util_iterators_do_WidthIteratorType;
 
 static int import_nf_util_iterators_do(void)
 {
+	PyObject * base = PyImport_ImportModule("nf.util.do.iterators");
+	if(!base)
+	{
+		return -1;
+	}
+
 	nf_util_iterators_do_StepIterator_c_next = PyCapsule_Import("nf.util.do.iterators.StepIterator_c_next", 0);
 	nf_util_iterators_do_StepIterator_reset = PyCapsule_Import("nf.util.do.iterators.StepIterator_reset", 0);
 	nf_util_iterators_do_StepIteratorType = PyCapsule_Import("nf.util.do.iterators.StepIteratorType", 0);

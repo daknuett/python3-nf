@@ -1,5 +1,5 @@
-from nf.util.do.iterators import WidthIterator, StepIterator
 import nf.integral.fast.do.line as line
+from nf.util.do.iterators import WidthIterator, StepIterator
 import sympy, pytest
 
 def test_integrate_line_rect():
