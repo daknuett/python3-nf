@@ -60,7 +60,6 @@ static int _do_line_integrate_float_rect_default(double * result,
 		}
 
 		PyObject * tuple = PyTuple_Pack(1, point);
-		Py_INCREF(tuple);
 
 		this_result = PyObject_CallObject(func, tuple);
 		Py_DECREF(tuple);
@@ -114,7 +113,6 @@ static int _do_line_integrate_float_rect_builtins(double * result,
 		nf_util_iterators_do_WidthIterator_c_next(step_width, &step);
 
 		PyObject * tuple = PyTuple_Pack(1, point);
-		Py_INCREF(tuple);
 
 		this_result = PyObject_CallObject(func, tuple);
 		Py_DECREF(tuple);
@@ -132,6 +130,7 @@ static int _do_line_integrate_float_rect_builtins(double * result,
 		this_result_float = PyFloat_AsDouble(this_result);
 		*result += this_result_float * step;
 		Py_DECREF(point);
+		Py_DECREF(this_result);
 	}
 	return 0;
 }

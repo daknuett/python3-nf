@@ -93,7 +93,6 @@ static PyObject * line_integrate_numbers_rect(PyObject * self, PyObject * args)
 		}
 
 		PyObject * tuple = PyTuple_Pack(1, point);
-		Py_INCREF(tuple);
 
 		this_result = PyObject_CallObject(func, tuple);
 		Py_DECREF(tuple);
