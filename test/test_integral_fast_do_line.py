@@ -1,5 +1,5 @@
+from nf.util.do.iterators import WidthIterator, StepIterator
 import nf.integral.fast.do.line as line
-import numpy as np
 import sympy, pytest
 
 def test_integrate_line_rect():
@@ -9,14 +9,7 @@ def test_integrate_line_rect():
 	term = X**2
 
 
-	r = np.arange(0, 10.0, 0.001)
-	class StepIterator(object):
-		def __init__(self, step):
-			self.step = step
-		def __iter__(self):
-			return self
-		def __next__(self):
-			return self.step
+	r = StepIterator(0, 10.0, 0.001)
 
-	assert line.integrate_float_rect(iter(r), StepIterator(0.001), f) == pytest.approx(sympy.integrate(term, (X, 0, 10)), rel=1e-2)
+	assert line.integrate_float_rect(r, WidthIterator(0.001), f) == pytest.approx(sympy.integrate(term, (X, 0, 10)), rel=1e-2)
 		

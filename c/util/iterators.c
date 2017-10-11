@@ -1,14 +1,6 @@
-#include <Python.h>
+#define c_nf_util_iterators
+#include "iterators.h"
 
-
-typedef struct
-{
-	PyObject_HEAD
-	double start;   // for __iter__ reset purposes.
-	double current; // will be returned by __next__()
-	double stop;    // if (current >= stop): raise StopIteration
-	double step;    // on __next__: current += step
-} nf_util_iterators_do_StepIterator;
 
 
 static PyObject * nf_util_iterators_do_StepIterator_new(PyTypeObject * type, PyObject * args, PyObject * kwds)
@@ -113,12 +105,6 @@ static PyTypeObject nf_util_iterators_do_StepIteratorType =
 	0,
 	nf_util_iterators_do_StepIterator_new,
 };
-
-typedef struct 
-{
-	PyObject_HEAD
-	double width;
-} nf_util_iterators_do_WidthIterator;
 
 
 static int nf_util_iterators_do_WidthIterator_init(nf_util_iterators_do_WidthIterator * self, PyObject * args, PyObject * kwds)
@@ -231,9 +217,59 @@ PyMODINIT_FUNC PyInit_iterators(void)
 		return NULL;
 	}
 
+	PyObject * nf_util_iterators_do_StepIterator_c_next_capsule;
+	PyObject * nf_util_iterators_do_StepIterator_reset_capsule;
+	PyObject * nf_util_iterators_do_StepIteratorType_capsule;
+	PyObject * nf_util_iterators_do_WidthIterator_c_next_capsule;
+	PyObject * nf_util_iterators_do_WidthIteratorType_capsule;
+
+
+	nf_util_iterators_do_StepIterator_c_next_capsule = PyCapsule_New(
+			nf_util_iterators_do_StepIterator_c_next, 
+			"nf.util.do.iterators.StepIterator_c_next", 
+			NULL);
+	nf_util_iterators_do_StepIterator_reset_capsule = PyCapsule_New(
+			nf_util_iterators_do_StepIterator_reset, 
+			"nf.util.do.iterators.StepIterator_reset", 
+			NULL);
+	nf_util_iterators_do_StepIteratorType_capsule = PyCapsule_New(
+			&nf_util_iterators_do_StepIteratorType, 
+			"nf.util.do.iterators.StepIteratorType", 
+			NULL);
+	nf_util_iterators_do_WidthIterator_c_next_capsule = PyCapsule_New(
+			nf_util_iterators_do_WidthIterator_c_next,
+			"nf.util.do.iterators.WidthIterator_c_next", 
+			NULL);
+	nf_util_iterators_do_WidthIteratorType_capsule = PyCapsule_New(
+			&nf_util_iterators_do_WidthIteratorType,
+			"nf.util.do.iterators.WidthIteratorType", 
+			NULL);
+
+
+	if(  (nf_util_iterators_do_StepIterator_c_next_capsule == NULL) ||
+             (nf_util_iterators_do_StepIterator_reset_capsule == NULL) ||
+             (nf_util_iterators_do_StepIteratorType_capsule == NULL) || 
+             (nf_util_iterators_do_WidthIterator_c_next_capsule == NULL) || 
+             (nf_util_iterators_do_WidthIteratorType_capsule == NULL) )
+	{
+		return NULL;
+	}
+
 	Py_INCREF(&nf_util_iterators_do_StepIteratorType);
 	Py_INCREF(&nf_util_iterators_do_WidthIteratorType);
 	PyModule_AddObject(module, "StepIterator", (PyObject *)&nf_util_iterators_do_StepIteratorType);
 	PyModule_AddObject(module, "WidthIterator", (PyObject *)&nf_util_iterators_do_WidthIteratorType);
+	Py_INCREF(nf_util_iterators_do_StepIterator_c_next_capsule);
+	Py_INCREF(nf_util_iterators_do_StepIterator_reset_capsule);
+	Py_INCREF(nf_util_iterators_do_StepIteratorType_capsule);
+	Py_INCREF(nf_util_iterators_do_WidthIterator_c_next_capsule);
+	Py_INCREF(nf_util_iterators_do_WidthIteratorType_capsule);
+	PyModule_AddObject(module, "StepIterator_c_next", nf_util_iterators_do_StepIterator_c_next_capsule);
+	PyModule_AddObject(module, "StepIterator_reset", nf_util_iterators_do_StepIterator_reset_capsule);
+	PyModule_AddObject(module, "StepIteratorType", nf_util_iterators_do_StepIteratorType_capsule);
+	PyModule_AddObject(module, "WidthIterator_c_next", nf_util_iterators_do_WidthIterator_c_next_capsule);
+	PyModule_AddObject(module, "WidthIteratorType", nf_util_iterators_do_WidthIteratorType_capsule);
+
+
 	return module;
 }
