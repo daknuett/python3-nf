@@ -189,6 +189,114 @@ static PyTypeObject nf_util_iterators_do_WidthIteratorType =
 };
 
 
+static PyObject * nf_util_iterators_do_ConvergenceIterator_new(PyTypeObject * type, PyObject * args, PyObject * kwds)
+{
+	nf_util_iterators_do_ConvergenceIterator * self = (nf_util_iterators_do_ConvergenceIterator *) type->tp_alloc(type, 0);
+	return (PyObject *) self;
+}
+
+static int nf_util_iterators_do_ConvergenceIterator_c_next(nf_util_iterators_do_ConvergenceIterator * self, double * result)
+{
+	double d = (self->current - self->limit) * self->sign;
+	self->current -= (d / 2) * self->sign;
+	*result = self->current;
+	if(d < self->precision)
+	{
+		return 1;
+	}
+
+	return 0;
+}
+
+static PyObject * nf_util_iterators_do_ConvergenceIterator_next(PyObject * self)
+{
+	double res;
+	if(nf_util_iterators_do_ConvergenceIterator_c_next((nf_util_iterators_do_ConvergenceIterator *) self, &res))
+	{
+		PyErr_SetString(PyExc_StopIteration, "");
+		return NULL;
+	}
+	return PyFloat_FromDouble(res);
+}
+
+static void nf_util_iterators_do_ConvergenceIterator_reset(nf_util_iterators_do_ConvergenceIterator * self)
+{
+	self->current = self->start;
+	double d = self->start - self->limit;
+	if(d < 0)
+	{
+		self->sign = -1;
+	}
+	else
+	{
+		self->sign = 1;
+	}
+}
+static PyObject * nf_util_iterators_do_ConvergenceIterator_iter(PyObject * self)
+{
+	nf_util_iterators_do_ConvergenceIterator_reset((nf_util_iterators_do_ConvergenceIterator *) self);
+	Py_INCREF(self);
+	return self;
+}
+
+static int nf_util_iterators_do_ConvergenceIterator_init(nf_util_iterators_do_ConvergenceIterator * self, 
+		PyObject * args, PyObject * kwds)
+{
+	static char * kw_names[] = {"start", "limit", "precision", NULL}; 
+	if(!PyArg_ParseTupleAndKeywords(args, kwds, "ddd", kw_names, &(self->start), &(self->limit), &(self->precision)))
+	{
+		return -1;
+	}
+	return 0;
+}
+
+static PyTypeObject nf_util_iterators_do_ConvergenceIteratorType = 
+{
+	PyVarObject_HEAD_INIT(NULL, 0)
+	"nf.util.do.ConvergenceIterator",
+	sizeof(nf_util_iterators_do_ConvergenceIterator),
+	0,                 /* tp_itemsize */
+	0,                 /* tp_dealloc */
+	0,                 /* tp_print */
+	0,                 /* tp_getattr */
+	0,                 /* tp_setattr */
+	0,                 /* tp_reserved */
+	0,                 /* tp_repr */
+	0,                 /* tp_as_number */
+	0,                 /* tp_as_sequence */
+	0,                 /* tp_as_mapping */
+	0,                 /* tp_hash  */
+	0,                 /* tp_call */
+	0,                 /* tp_str */
+	0,                 /* tp_getattro */
+	0,                 /* tp_setattro */
+	0,                 /* tp_as_buffer */
+	Py_TPFLAGS_DEFAULT ,/* tp_flags */
+	"A WidthIterator returns always the same value (width)."
+	"\nThis class is optimized to be used in"
+	"\n``nf`` and can be accessed from the C backend without using the"
+	"\n(slow) python __next__.",   /* tp_doc */	
+
+	0,
+	0,
+	0,
+	0,
+	nf_util_iterators_do_ConvergenceIterator_iter,
+	nf_util_iterators_do_ConvergenceIterator_next,
+	0, // methods
+	0, // members
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	(initproc) nf_util_iterators_do_ConvergenceIterator_init,
+	0,
+	nf_util_iterators_do_ConvergenceIterator_new,
+};
+
+
 static PyModuleDef nf_util_iterators_do_iteratorsmodule = 
 {
 	PyModuleDef_HEAD_INIT,
@@ -211,6 +319,10 @@ PyMODINIT_FUNC PyInit_iterators(void)
 	{
 		return NULL;
 	}
+	if(PyType_Ready(&nf_util_iterators_do_ConvergenceIteratorType) < 0)
+	{
+		return NULL;
+	}
 	module = PyModule_Create(&nf_util_iterators_do_iteratorsmodule);
 	if(!module)
 	{
@@ -222,6 +334,9 @@ PyMODINIT_FUNC PyInit_iterators(void)
 	PyObject * nf_util_iterators_do_StepIteratorType_capsule;
 	PyObject * nf_util_iterators_do_WidthIterator_c_next_capsule;
 	PyObject * nf_util_iterators_do_WidthIteratorType_capsule;
+	PyObject * nf_util_iterators_do_ConvergenceIterator_c_next_capsule;
+	PyObject * nf_util_iterators_do_ConvergenceIterator_reset_capsule;
+	PyObject * nf_util_iterators_do_ConvergenceIteratorType_capsule;
 
 
 	nf_util_iterators_do_StepIterator_c_next_capsule = PyCapsule_New(
@@ -244,11 +359,26 @@ PyMODINIT_FUNC PyInit_iterators(void)
 			&nf_util_iterators_do_WidthIteratorType,
 			"nf.util.do.iterators.WidthIteratorType", 
 			NULL);
+	nf_util_iterators_do_ConvergenceIterator_c_next_capsule = PyCapsule_New(
+			nf_util_iterators_do_ConvergenceIterator_c_next, 
+			"nf.util.do.iterators.ConvergenceIterator_c_next", 
+			NULL);
+	nf_util_iterators_do_ConvergenceIterator_reset_capsule = PyCapsule_New(
+			nf_util_iterators_do_ConvergenceIterator_reset, 
+			"nf.util.do.iterators.ConvergenceIterator_reset", 
+			NULL);
+	nf_util_iterators_do_ConvergenceIteratorType_capsule = PyCapsule_New(
+			&nf_util_iterators_do_ConvergenceIteratorType, 
+			"nf.util.do.iterators.ConvergenceIteratorType", 
+			NULL);
 
 
 	if(  (nf_util_iterators_do_StepIterator_c_next_capsule == NULL) ||
              (nf_util_iterators_do_StepIterator_reset_capsule == NULL) ||
              (nf_util_iterators_do_StepIteratorType_capsule == NULL) || 
+	     (nf_util_iterators_do_ConvergenceIterator_c_next_capsule == NULL) ||
+             (nf_util_iterators_do_ConvergenceIterator_reset_capsule == NULL) ||
+             (nf_util_iterators_do_ConvergenceIteratorType_capsule == NULL) || 
              (nf_util_iterators_do_WidthIterator_c_next_capsule == NULL) || 
              (nf_util_iterators_do_WidthIteratorType_capsule == NULL) )
 	{
@@ -258,17 +388,24 @@ PyMODINIT_FUNC PyInit_iterators(void)
 	Py_INCREF(&nf_util_iterators_do_StepIteratorType);
 	Py_INCREF(&nf_util_iterators_do_WidthIteratorType);
 	PyModule_AddObject(module, "StepIterator", (PyObject *)&nf_util_iterators_do_StepIteratorType);
+	PyModule_AddObject(module, "ConvergenceIterator", (PyObject *)&nf_util_iterators_do_ConvergenceIteratorType);
 	PyModule_AddObject(module, "WidthIterator", (PyObject *)&nf_util_iterators_do_WidthIteratorType);
 	Py_INCREF(nf_util_iterators_do_StepIterator_c_next_capsule);
 	Py_INCREF(nf_util_iterators_do_StepIterator_reset_capsule);
 	Py_INCREF(nf_util_iterators_do_StepIteratorType_capsule);
 	Py_INCREF(nf_util_iterators_do_WidthIterator_c_next_capsule);
 	Py_INCREF(nf_util_iterators_do_WidthIteratorType_capsule);
+	Py_INCREF(nf_util_iterators_do_ConvergenceIterator_c_next_capsule);
+	Py_INCREF(nf_util_iterators_do_ConvergenceIterator_reset_capsule);
+	Py_INCREF(nf_util_iterators_do_ConvergenceIteratorType_capsule);
 	PyModule_AddObject(module, "StepIterator_c_next", nf_util_iterators_do_StepIterator_c_next_capsule);
 	PyModule_AddObject(module, "StepIterator_reset", nf_util_iterators_do_StepIterator_reset_capsule);
 	PyModule_AddObject(module, "StepIteratorType", nf_util_iterators_do_StepIteratorType_capsule);
 	PyModule_AddObject(module, "WidthIterator_c_next", nf_util_iterators_do_WidthIterator_c_next_capsule);
 	PyModule_AddObject(module, "WidthIteratorType", nf_util_iterators_do_WidthIteratorType_capsule);
+	PyModule_AddObject(module, "ConvergenceIterator_c_next", nf_util_iterators_do_ConvergenceIterator_c_next_capsule);
+	PyModule_AddObject(module, "ConvergenceIterator_reset", nf_util_iterators_do_ConvergenceIterator_reset_capsule);
+	PyModule_AddObject(module, "ConvergenceIteratorType", nf_util_iterators_do_ConvergenceIteratorType_capsule);
 
 
 	return module;

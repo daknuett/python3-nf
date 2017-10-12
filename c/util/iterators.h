@@ -18,6 +18,16 @@ typedef struct
 	double width;
 } nf_util_iterators_do_WidthIterator;
 
+typedef struct
+{
+	PyObject_HEAD
+	double start;
+	double limit;
+	double precision;
+	double current;
+	short int sign;
+} nf_util_iterators_do_ConvergenceIterator;
+
 #ifndef c_nf_util_iterators
 
 static int (* nf_util_iterators_do_StepIterator_c_next)(nf_util_iterators_do_StepIterator * self, double * res);
@@ -25,6 +35,9 @@ static void (* nf_util_iterators_do_StepIterator_reset)(nf_util_iterators_do_Ste
 static PyTypeObject * nf_util_iterators_do_StepIteratorType; 
 static int (* nf_util_iterators_do_WidthIterator_c_next)(nf_util_iterators_do_WidthIterator * self, double * res);
 static PyTypeObject * nf_util_iterators_do_WidthIteratorType;
+static int (* nf_util_iterators_do_ConvergenceIterator_c_next)(nf_util_iterators_do_ConvergenceIterator * self, double * res);
+static void (* nf_util_iterators_do_ConvergenceIterator_reset)(nf_util_iterators_do_ConvergenceIterator * self);
+static PyTypeObject * nf_util_iterators_do_ConvergenceIteratorType; 
 
 
 static int import_nf_util_iterators_do(void)
@@ -40,10 +53,16 @@ static int import_nf_util_iterators_do(void)
 	nf_util_iterators_do_StepIteratorType = PyCapsule_Import("nf.util.do.iterators.StepIteratorType", 0);
 	nf_util_iterators_do_WidthIterator_c_next = PyCapsule_Import("nf.util.do.iterators.WidthIterator_c_next", 0);
 	nf_util_iterators_do_WidthIteratorType = PyCapsule_Import("nf.util.do.iterators.WidthIteratorType", 0);
+	nf_util_iterators_do_ConvergenceIterator_c_next = PyCapsule_Import("nf.util.do.iterators.ConvergenceIterator_c_next", 0);
+	nf_util_iterators_do_ConvergenceIterator_reset = PyCapsule_Import("nf.util.do.iterators.ConvergenceIterator_reset", 0);
+	nf_util_iterators_do_ConvergenceIteratorType = PyCapsule_Import("nf.util.do.iterators.ConvergenceIteratorType", 0);
 
 	if(  (nf_util_iterators_do_StepIterator_c_next == NULL) ||
              (nf_util_iterators_do_StepIterator_reset == NULL) ||
              (nf_util_iterators_do_StepIteratorType == NULL) || 
+	     (nf_util_iterators_do_ConvergenceIterator_c_next == NULL) ||
+             (nf_util_iterators_do_ConvergenceIterator_reset == NULL) ||
+             (nf_util_iterators_do_ConvergenceIteratorType == NULL) || 
              (nf_util_iterators_do_WidthIterator_c_next == NULL) || 
              (nf_util_iterators_do_WidthIteratorType == NULL) )
 	{
